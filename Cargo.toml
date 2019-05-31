@@ -1,0 +1,14 @@
+[package]
+name = "lazperf"
+version = "0.1.0"
+authors = ["tmontaigu <thomas.montaigu@laposte.net>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+libc = "0.2.0"
+
+
+[build-dependencies]
+cc = "1.0"
+
