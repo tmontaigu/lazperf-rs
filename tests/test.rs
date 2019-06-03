@@ -99,4 +99,9 @@ fn test_streaming_compression_points() {
     let point_len = compression_output.seek(SeekFrom::Current(0)).unwrap();
     vlr_compressor.write_chunk_table();
     compression_output.write_all(vlr_compressor.internal_data()).unwrap();
+    let raw_compressed_points = compression_output.into_inner();
+
+    let laszip_vlr_data = vlr_compressor.laszip_vlr_data();
+    let raw_decompressed_points = lazperf::VlrDecompressor::decompress_points(
+        &raw_compressed_points[1..], &laszip_vlr_data, NUM_POINTS, POINT_SIZE);
 }

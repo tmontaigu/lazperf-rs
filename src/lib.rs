@@ -150,6 +150,16 @@ impl VlrCompressor {
             std::slice::from_raw_parts(ptr, size)
         }
     }
+
+    pub fn laszip_vlr_data(&self) -> Vec<u8> {
+        unsafe {
+            let vlr_data = ffi::lazperf_vlr_compressor_vlr_data(self.compressor);
+            let mut data = Vec::<u8>::with_capacity(vlr_data.size);
+            (vlr_data.data as *const u8).copy_to(data.as_mut_ptr(), vlr_data.size);
+            //TODO FREE vlr_data;
+            data
+        }
+    }
 }
 
 impl Drop for VlrCompressor {

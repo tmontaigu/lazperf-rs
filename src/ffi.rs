@@ -96,4 +96,5 @@ extern {
     pub fn lazperf_vlr_compressor_internal_buffer_size(compressor: LazPerf_VlrCompressorPtr) -> libc::size_t;
     pub fn lazperf_delete_vlr_compressor(compressor: LazPerf_VlrCompressorPtr);
     pub fn lazperf_vlr_compressor_reset_size(compressor: LazPerf_VlrCompressorPtr);
+    pub fn lazperf_vlr_compressor_vlr_data(compressor: LazPerf_VlrCompressorPtr) -> LazPerfSizedBuffer;
 }
