@@ -1,0 +1,3 @@
+[submodule "lazperf-c"]
+	path = lazperf-c
+	url = https://github.com/tmontaigu/lazperf-c
