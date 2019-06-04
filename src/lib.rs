@@ -100,6 +100,7 @@ impl Drop for RecordSchema {
     }
 }
 
+#[derive(Debug)]
 pub struct VlrCompressor {
     compressor: ffi::LazPerf_VlrCompressorPtr
 }
