@@ -67,7 +67,7 @@ extern {
         laszip_vlr_data: *const libc::c_char,
         num_points: libc::size_t,
         point_size: libc::size_t,
-        out_buffer: *mut libc::uint8_t,
+        out_buffer: *mut u8,
     );
 
     pub fn lazperf_new_vlr_decompressor(
@@ -91,9 +91,9 @@ pub type LazPerfVlr_CompressorPtr = *mut c_void;
 extern {
     pub fn lazperf_new_vlr_compressor(schema: LazPerf_RecordSchemaPtr) -> LazPerfVlr_CompressorPtr;
     pub fn lazperf_vlr_compressor_compress(compressor: LazPerfVlr_CompressorPtr, input: *const libc::c_char) -> libc::size_t;
-    pub fn lazperf_vlr_compressor_done(compressor: LazPerfVlr_CompressorPtr) -> libc::uint64_t;
-    pub fn lazperf_vlr_compressor_write_chunk_table(compressor: LazPerfVlr_CompressorPtr) -> libc::uint64_t;
-    pub fn lazperf_vlr_compressor_internal_buffer(compressor: LazPerfVlr_CompressorPtr) -> *const libc::uint8_t;
+    pub fn lazperf_vlr_compressor_done(compressor: LazPerfVlr_CompressorPtr) -> u64;
+    pub fn lazperf_vlr_compressor_write_chunk_table(compressor: LazPerfVlr_CompressorPtr) -> u64;
+    pub fn lazperf_vlr_compressor_internal_buffer(compressor: LazPerfVlr_CompressorPtr) -> *const u8;
     pub fn lazperf_vlr_compressor_internal_buffer_size(compressor: LazPerfVlr_CompressorPtr) -> libc::size_t;
     pub fn lazperf_delete_vlr_compressor(compressor: LazPerfVlr_CompressorPtr);
     pub fn lazperf_vlr_compressor_reset_size(compressor: LazPerfVlr_CompressorPtr);

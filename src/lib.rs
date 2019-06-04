@@ -49,7 +49,7 @@ impl VlrDecompressor {
                 laszip_vlr_data.as_ptr() as *const libc::c_char,
                 num_points,
                 point_size,
-                out_buffer.as_mut_ptr() as *mut libc::uint8_t,
+                out_buffer.as_mut_ptr() as *mut u8,
             );
             out_buffer
         }
