@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["tmontaigu <thomas.montaigu@laposte.net>"]
 edition = "2018"
 build = "build.rs"
+homepage = "https://github.com/tmontaigu/lazperf-rs"
+repository = "https://github.com/tmontaigu/lazperf-rs"
+readme = "README.md"
+license-file = "LICENSE.txt"
 
 [dependencies]
 libc = "0.2.0"

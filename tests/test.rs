@@ -2,7 +2,6 @@ extern crate lazperf;
 
 use std::fs::File;
 use std::io::{Cursor, Read, Seek, SeekFrom, Write};
-use std::io::SeekFrom::Current;
 
 const LAS_HEADER_SIZE: u64 = 227;
 const VLR_HEADER_SIZE: u64 = 54;
@@ -96,12 +95,15 @@ fn test_streaming_compression_points() {
     compression_output.write_all(vlr_compressor.internal_data()).unwrap();
     vlr_compressor.reset_size();
 
-    let point_len = compression_output.seek(SeekFrom::Current(0)).unwrap();
+    compression_output.seek(SeekFrom::Current(0)).unwrap();
     vlr_compressor.write_chunk_table();
     compression_output.write_all(vlr_compressor.internal_data()).unwrap();
     let raw_compressed_points = compression_output.into_inner();
 
     let laszip_vlr_data = vlr_compressor.laszip_vlr_data();
+    // skip the chunk table size when decompressing
     let raw_decompressed_points = lazperf::VlrDecompressor::decompress_points(
-        &raw_compressed_points[1..], &laszip_vlr_data, NUM_POINTS, POINT_SIZE);
+        &raw_compressed_points[std::mem::size_of::<u64>()..], &laszip_vlr_data, NUM_POINTS, POINT_SIZE);
+
+    assert_eq!(raw_decompressed_points, raw_expected_decompressed_point);
 }

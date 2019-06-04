@@ -1,6 +1,3 @@
-use std::panic::resume_unwind;
-use std::ptr::NonNull;
-
 use libc;
 
 mod ffi;
@@ -9,6 +6,7 @@ mod ffi;
 pub enum Error {
     Failed,
 }
+
 #[derive(Debug)]
 pub struct VlrDecompressor {
     decompressor: ffi::LazPerf_VlrDecompressorPtr
@@ -102,7 +100,7 @@ impl Drop for RecordSchema {
 
 #[derive(Debug)]
 pub struct VlrCompressor {
-    compressor: ffi::LazPerf_VlrCompressorPtr
+    compressor: ffi::LazPerfVlr_CompressorPtr
 }
 
 impl VlrCompressor {
@@ -121,7 +119,7 @@ impl VlrCompressor {
     }
 
     pub fn done(&mut self) -> usize {
-        let size = unsafe {
+        unsafe {
             return ffi::lazperf_vlr_compressor_done(self.compressor) as usize;
         };
     }
@@ -155,9 +153,9 @@ impl VlrCompressor {
     pub fn laszip_vlr_data(&self) -> Vec<u8> {
         unsafe {
             let vlr_data = ffi::lazperf_vlr_compressor_vlr_data(self.compressor);
-            let mut data = Vec::<u8>::with_capacity(vlr_data.size);
+            let mut data = vec![0u8; vlr_data.size];
             (vlr_data.data as *const u8).copy_to(data.as_mut_ptr(), vlr_data.size);
-            //TODO FREE vlr_data;
+            ffi::lazperf_delete_sized_buffer(vlr_data);
             data
         }
     }
@@ -188,5 +186,46 @@ mod tests {
 
         record_schema.push_extrabytes(6);
         assert_eq!(record_schema.size_in_bytes(), 40);
+    }
+
+    #[test]
+    fn point_vlr_data_not_empty() {
+        {
+            let mut record_schema = super::RecordSchema::new();
+            record_schema.push_point();
+
+            let compressor = super::VlrCompressor::new(&record_schema);
+            assert!(!compressor.laszip_vlr_data().is_empty());
+        }
+    }
+    #[test]
+    fn point_gps_vlr_data_not_empty() {
+        let mut record_schema = super::RecordSchema::new();
+        record_schema.push_point();
+        record_schema.push_gpstime();
+
+        let compressor = super::VlrCompressor::new(&record_schema);
+        assert!(!compressor.laszip_vlr_data().is_empty());
+    }
+
+    #[test]
+    fn point_gps_rgb_vlr_data_not_empty() {
+        let mut record_schema = super::RecordSchema::new();
+        record_schema.push_point();
+        record_schema.push_gpstime();
+        record_schema.push_rgb();
+
+        let compressor = super::VlrCompressor::new(&record_schema);
+        assert!(!compressor.laszip_vlr_data().is_empty());
+    }
+
+    #[test]
+    fn point_rgb_vlr_data_not_empty() {
+        let mut record_schema = super::RecordSchema::new();
+        record_schema.push_point();
+        record_schema.push_rgb();
+
+        let compressor = super::VlrCompressor::new(&record_schema);
+        assert!(!compressor.laszip_vlr_data().is_empty());
     }
 }
