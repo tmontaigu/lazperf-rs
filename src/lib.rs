@@ -228,4 +228,35 @@ mod tests {
         let compressor = super::VlrCompressor::new(&record_schema);
         assert!(!compressor.laszip_vlr_data().is_empty());
     }
+
+    #[test]
+    fn test_call_done_but_no_call_compress_before() {
+        let mut record_schema = super::RecordSchema::new();
+        record_schema.push_point();
+        record_schema.push_rgb();
+
+        let mut compressor = super::VlrCompressor::new(&record_schema);
+        compressor.done();
+    }
+
+    #[test]
+    fn test_call_write_chunk_table_but_no_call_compress_before() {
+        let mut record_schema = super::RecordSchema::new();
+        record_schema.push_point();
+        record_schema.push_rgb();
+
+        let mut compressor = super::VlrCompressor::new(&record_schema);
+        assert_eq!(compressor.write_chunk_table(), 12);
+    }
+
+    #[test]
+    fn test_no_call_compress() {
+        let mut record_schema = super::RecordSchema::new();
+        record_schema.push_point();
+        record_schema.push_rgb();
+
+        let mut compressor = super::VlrCompressor::new(&record_schema);
+        compressor.done();
+        assert_eq!(compressor.write_chunk_table(), 12);
+    }
 }
